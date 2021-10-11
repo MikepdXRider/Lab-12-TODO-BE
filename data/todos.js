@@ -1,17 +1,17 @@
 module.exports = [
   {
-    todo: 'Make an account',
-    complete: false,
+    todo_description: 'Make an account',
+    is_complete: false
     // Do I need a user_id here? 
   },
   {
-    todo: 'Make a todo',
-    complete:  false,
+    todo_description: 'Make a todo',
+    is_complete:  false
     // Do I need a user_id here? 
   },
   {
-    todo: 'Complete a todo',
-    complete: false,
+    todo_description: 'Complete a todo',
+    is_complete: false
     // Do I need a user_id here? 
   }
 ];
