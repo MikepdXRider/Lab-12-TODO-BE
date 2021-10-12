@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const { execSync } = require('child_process');
+const { execPath } = require('process');
 
 const fakeRequest = require('supertest');
 const app = require('../lib/app');
@@ -28,35 +29,102 @@ describe('app routes', () => {
       return client.end(done);
     });
 
-    test('returns animals', async() => {
+    test('POST endpoint create todo', async() => {
 
-      const expectation = [
+      const expectation =
         {
-          'id': 1,
-          'name': 'bessie',
-          'cool_factor': 3,
-          'owner_id': 1
-        },
-        {
-          'id': 2,
-          'name': 'jumpy',
-          'cool_factor': 4,
-          'owner_id': 1
-        },
-        {
-          'id': 3,
-          'name': 'spot',
-          'cool_factor': 10,
-          'owner_id': 1
-        }
-      ];
+          id: expect.any(Number),
+          todo_description: expect.any(String),
+          is_complete: expect.any(Boolean),
+          owner_id: expect.any(Number)
+        };
 
       const data = await fakeRequest(app)
-        .get('/animals')
+        .post('/api/todos')
+        .set('Authorization', token)
+        .send({
+          todo_description: 'New todo'
+        })
         .expect('Content-Type', /json/)
         .expect(200);
 
-      expect(data.body).toEqual(expectation);
+      expect(data.body).toEqual(expect.arrayContaining([expectation]));
+    });
+
+    test('GET endpoint retrieves todos', async() => {
+
+      const expectation =
+        {
+          id: expect.any(Number),
+          todo_description: expect.any(String),
+          is_complete: expect.any(Boolean),
+          owner_id: expect.any(Number)
+        };
+
+      const data = await fakeRequest(app)
+        .get('/api/todos')
+        .set('Authorization', token)
+        .expect('Content-Type', /json/)
+        .expect(200);
+      expect(data.body).toEqual(expect.arrayContaining([expectation]));
+    });
+
+    
+    test('PUT endpoint updates a specific todo', async() => {
+
+      const expectation =
+        {
+          id: expect.any(Number),
+          todo_description: expect.any(String),
+          is_complete: true,
+          owner_id: expect.any(Number)
+        };
+
+      const returningData = await fakeRequest(app)
+        .put('/api/todos/4')
+        .set('Authorization', token)
+        .send({
+          todo_description: 'New todo',
+          is_complete: true
+        })
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      // const trueData = await fakeRequest(app)s
+      //   .get('/api/todos')
+      //   .set('Authorization', token)
+      //   .expect('Content-Type', /json/)
+      //   .expect(200);
+
+      expect(returningData.body).toEqual(expectation);
+      // expect(trueData.body).toEqual(expect.arrayContaining([expectation]));
+    });
+
+
+    test('DELETE endpoint deletes a specific todo', async() => {
+
+      const expectation =
+        {
+          id: expect.any(Number),
+          todo_description: expect.any(String),
+          is_complete: expect.any(Boolean),
+          owner_id: expect.any(Number)
+        };
+
+      const returningData = await fakeRequest(app)
+        .delete('/api/todos/4')
+        .set('Authorization', token)
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      // const trueData = await fakeRequest(app)s
+      //   .get('/api/todos')
+      //   .set('Authorization', token)
+      //   .expect('Content-Type', /json/)
+      //   .expect(200);
+
+      expect(returningData.body).toEqual(expect.arrayContaining([expectation]));
+      // expect(trueData.body).toEqual(expect.arrayContaining([expectation]));
     });
   });
 });
