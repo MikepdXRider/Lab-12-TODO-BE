@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const { execSync } = require('child_process');
+const { execPath } = require('process');
 
 const fakeRequest = require('supertest');
 const app = require('../lib/app');
@@ -95,7 +96,7 @@ describe('app routes', () => {
       //   .expect('Content-Type', /json/)
       //   .expect(200);
 
-      expect(returningData.body).toEqual(expect.arrayContaining([expectation]));
+      expect(returningData.body).toEqual(expectation);
       // expect(trueData.body).toEqual(expect.arrayContaining([expectation]));
     });
 
